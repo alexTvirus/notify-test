@@ -14,10 +14,12 @@ const FormInputTask = (props) => {
 
     const prehandleSubmit = (e) => {
         handleAdd(e.taskName)
+        console.log("1 "+inputVale)
         form.setFieldValue({
             taskName: ""
         })
         setInputValue("")
+        console.log("2 "+inputVale)
     }
 
     return (<>

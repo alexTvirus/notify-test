@@ -7,7 +7,7 @@ import JsonApi from './api/jsonServer';
 import Task from './components/Task';
 import FormInputTask from './components/FormInputTask';
 import { Pagination, Spin } from 'antd';
-
+import { Divider } from 'antd';
 function App() {
 
   const [listTask, setlistTask] = useState([])
@@ -100,9 +100,11 @@ function App() {
             </div>
             <FormInputTask handleAdd={handleAdd}></FormInputTask>
           </div>
+          <Divider />
           <div className="todoApp--main">
             {isLoading ? <Spin></Spin> : renderListTask(listTask)}
           </div>
+          <Divider />
           <div className="todoApp--footer">
             <Pagination align="center"
               onChange={handlePagination}

@@ -21,10 +21,12 @@
     "sass": "^1.77.8",
     "stream-browserify": "^3.0.0",
     "vm-browserify": "^1.1.2",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "concurrently": "^8.2.2",
+    "json-server": "^1.0.0-beta.0"
   },
   "scripts": {
-    "start": "concurrently \"react-scripts start\" \" json-server --watch ./JsonServer/db.json --port 5000 \" ",
+    "start": "concurrently \"react-scripts start\" \" json-server --watch ./JsonServer/db.json --port 5000 \" "
   },
   "eslintConfig": {
     "extends": [
