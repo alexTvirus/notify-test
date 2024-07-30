@@ -9,12 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "antd": "^5.19.3",
     "axios": "^1.7.2",
-    "buffer": "^6.0.3",
-    "concurrently": "^8.2.2",
-    "crypto": "^1.0.1",
-    "crypto-browserify": "^3.12.0",
     "dotenv": "^16.4.5",
-    "json-server": "^1.0.0-beta.0",
     "moment": "^2.30.1",
     "os": "^0.1.2",
     "path": "^0.12.7",
@@ -27,7 +22,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "concurrently \"react-scripts start\" \" json-server --watch ./JsonServer/db.json --port 5000 \" "
+    "start": "react-scripts start"
   },
   "eslintConfig": {
     "extends": [
