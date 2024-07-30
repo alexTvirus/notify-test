@@ -4,12 +4,12 @@ const url = process.env.JSONSERVER_URI
 
 const JsonApi = {
 
-    getAllTasks: async (params) => {
+    getAllTasks: async (params={}) => {
         try {
             const rsp = await axios.get(`${url}/tasks`, {
                 params: {
-                    _sort: "createAt",
-                    _order: "desc",
+                    _sort: "-createAt",
+                    _order: "asc",
                     ...params
                 }
             })
@@ -42,17 +42,6 @@ const JsonApi = {
         } catch (error) {
             console.error(error)
         }
-    },
-    getCurrentPage: async (params) => {
-        try {
-            const rsp = await axios.get(`${url}/currentPage`)
-            if (rsp && rsp.status >= 200 && rsp.status <= 299) {
-                return rsp.data.page
-            }
-        } catch (error) {
-            console.error(error)
-        }
-        return null
     }
 
 }

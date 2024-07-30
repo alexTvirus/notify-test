@@ -6,65 +6,52 @@ import JsonApi from './api/jsonServer';
 
 import Task from './components/Task';
 import FormInputTask from './components/FormInputTask';
-import { Pagination, Spin } from 'antd';
+import { Pagination, Spin, message } from 'antd';
 import { Divider } from 'antd';
+import { Row, Col, Layout } from 'antd';
+import moment from 'moment';
+
 function App() {
 
   const [listTask, setlistTask] = useState([])
   const [isLoading, setIsLoading] = useState(false)
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    perPage: 5,
-    totalData: 0
-  })
 
-  const updateListTask = async (currentPage = 1, perPage) => {
+  const updateListTask = async (currentPage = 1, perPage = 5) => {
     setIsLoading(true)
-    let rsp = await JsonApi.getAllTasks({ _page: currentPage, _per_page: perPage })
-    setPagination({
-      currentPage: currentPage,
-      perPage: perPage,
-      totalData: rsp.items
-    })
-    setlistTask(rsp.data)
+    let now = moment(moment(new Date()).format("DD/MM/YYYY"), "DD/MM/YYYY");
+    // let rsp = await JsonApi.getAllTasks({ notifyAtTimestamp_gte: now.valueOf() })
+    let rsp = await JsonApi.getAllTasks()
+    setlistTask(rsp)
     setIsLoading(false)
   }
 
-  const handlePagination = async (page, pageSize) => {
-    updateListTask(page, pageSize)
-  }
 
   useEffect(() => {
-    updateListTask(pagination.currentPage, pagination.perPage)
+    updateListTask()
   }, [])
 
 
   const handleRemove = async (id) => {
     setIsLoading(true)
     await JsonApi.deleteTask(id)
-    updateListTask(pagination.currentPage, pagination.perPage)
+    updateListTask()
   }
 
-  const handleDone = async (id) => {
-    setIsLoading(true)
-    let newTask = {
-      id: id,
-      isDone: true
-    }
-    await JsonApi.updateTask(id, newTask)
-    updateListTask(pagination.currentPage, pagination.perPage)
+  const handleNotify = (listTask) => {
   }
 
   const handleAdd = async (task) => {
     setIsLoading(true)
     let newTask = {
       id: await GenID.genId(),
-      name: task,
+      name: task.taskName,
+      notifyAt: task.notifyAt,
       isDone: false,
+      notifyAtTimestamp: moment(task.notifyAt, "DD/MM/YYYY").valueOf(),
       createAt: Date.now()
     }
     await JsonApi.addTask(newTask)
-    updateListTask(pagination.currentPage, pagination.perPage)
+    updateListTask()
 
   }
 
@@ -75,20 +62,26 @@ function App() {
         <div> Please insert new task</div>
       </>)
     }
+    let now = moment(moment(new Date()).format("DD/MM/YYYY"), "DD/MM/YYYY");
 
-    return lists.map((item) => {
+    let isNotify = false
+    let returnList = lists.map((item) => {
+      isNotify = item.notifyAtTimestamp === now.valueOf()
+      if (isNotify)
+        message.info(item.name)
       return (
         <>
           <Task
             key={item.id}
             data={item}
-            handleDone={handleDone}
             handleRemove={handleRemove}
-
+            isNotify={isNotify}
           ></Task>
         </>
       )
     })
+
+    return returnList
   }
   return (
     <div className="App">
@@ -96,23 +89,28 @@ function App() {
         <div className="todoApp--wrapper">
           <div className="todoApp--header">
             <div className="todoApp--header__title">
-              <h1>To Do List App</h1>
+              <h1>Nhắc nhở ngày quan trọng</h1>
             </div>
-            <FormInputTask handleAdd={handleAdd}></FormInputTask>
+
           </div>
           <Divider />
           <div className="todoApp--main">
-            {isLoading ? <Spin></Spin> : renderListTask(listTask)}
+            <Layout>
+              <Layout.Content style={{ padding: '20px 50px' }}>
+                <Row gutter={[50, 50]}>
+                  <Col xs={24} sm={24} md={24} lg={12}>
+                    <FormInputTask handleAdd={handleAdd}></FormInputTask>
+                  </Col>
+                  <Col xs={24} sm={24} md={24} lg={12}>
+                    <div className="listTask">
+                      {isLoading ? <Spin></Spin> : renderListTask(listTask)}
+                    </div>
+                  </Col>
+                </Row>
+              </Layout.Content>
+            </Layout>
           </div>
-          <Divider />
-          <div className="todoApp--footer">
-            <Pagination align="center"
-              onChange={handlePagination}
-              pageSize={pagination.perPage}
-              defaultCurrent={pagination.currentPage}
-              current={pagination.currentPage}
-              total={pagination.totalData || 0} />
-          </div>
+
         </div>
 
 
